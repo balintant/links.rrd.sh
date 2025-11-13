@@ -2,7 +2,7 @@ import { file } from "bun";
 import { mkdir, rm } from "fs/promises";
 import { join } from "path";
 import Mustache from "mustache";
-import { generateAppleWalletPass } from "./pass-generator.js";
+import { generateContactCard } from "./contact-card-generator.js";
 
 const DIST_DIR = "dist";
 
@@ -63,13 +63,13 @@ async function build() {
     const qrHTML = Mustache.render(qrTemplate, { ...page, baseUrl });
     await Bun.write(join(qrDir, "index.html"), qrHTML);
 
-    // Generate Apple Wallet pass
+    // Generate contact card (vCard)
     try {
-      const passBuffer = await generateAppleWalletPass(page, baseUrl);
-      await Bun.write(join(qrDir, "pass.pkpass"), passBuffer);
-      console.log(`✓ Generated wallet pass for ${page.slug}`);
+      const vCardContent = generateContactCard(page, baseUrl);
+      await Bun.write(join(qrDir, "contact.vcf"), vCardContent);
+      console.log(`✓ Generated contact card for ${page.slug}`);
     } catch (error) {
-      console.warn(`⚠ Could not generate wallet pass for ${page.slug}:`, error.message);
+      console.warn(`⚠ Could not generate contact card for ${page.slug}:`, error.message);
     }
   }
 
