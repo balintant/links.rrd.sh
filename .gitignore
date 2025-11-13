@@ -6,6 +6,10 @@ out
 dist
 *.tgz
 
+# temporary pass generation files
+temp-model
+certs
+
 # code coverage
 coverage
 *.lcov

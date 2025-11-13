@@ -104,6 +104,43 @@
       word-break: break-all;
     }
 
+    .wallet-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: none;
+      cursor: pointer;
+      margin-left: 12px;
+    }
+
+    .wallet-button:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .wallet-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
     @media (max-width: 480px) {
       .name {
         font-size: 24px;
@@ -111,6 +148,14 @@
 
       .qr-container {
         padding: 24px;
+      }
+
+      .button-container {
+        flex-direction: column;
+      }
+
+      .wallet-button {
+        margin-left: 0;
       }
     }
   </style>
@@ -124,6 +169,15 @@
     </div>
     <div class="qr-container">
       <div id="qrcode"></div>
+    </div>
+    <div class="button-container">
+      <a href="../" class="back-link">
+        <span>← Back to Links</span>
+      </a>
+      <a href="pass.pkpass" class="wallet-button" download="{{slug}}-contact.pkpass">
+        <img src="../../assets/icons/wallet.svg" alt="Apple Wallet" class="wallet-icon" />
+        <span>Add to Apple Wallet</span>
+      </a>
     </div>
   </div>
 

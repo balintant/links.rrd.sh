@@ -2,6 +2,7 @@ import { file } from "bun";
 import { mkdir, rm } from "fs/promises";
 import { join } from "path";
 import Mustache from "mustache";
+import { generateAppleWalletPass } from "./pass-generator.js";
 
 const DIST_DIR = "dist";
 
@@ -61,6 +62,15 @@ async function build() {
     await mkdir(qrDir, { recursive: true });
     const qrHTML = Mustache.render(qrTemplate, { ...page, baseUrl });
     await Bun.write(join(qrDir, "index.html"), qrHTML);
+
+    // Generate Apple Wallet pass
+    try {
+      const passBuffer = await generateAppleWalletPass(page, baseUrl);
+      await Bun.write(join(qrDir, "pass.pkpass"), passBuffer);
+      console.log(`✓ Generated wallet pass for ${page.slug}`);
+    } catch (error) {
+      console.warn(`⚠ Could not generate wallet pass for ${page.slug}:`, error.message);
+    }
   }
 
   // Copy assets
