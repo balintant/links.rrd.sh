@@ -174,10 +174,10 @@
       <a href="../" class="back-link">
         <span>← Back to Links</span>
       </a>
-      <a href="contact.vcf" class="wallet-button" download="{{slug}}-contact.vcf">
+      <button id="saveToWallet" class="wallet-button">
         <img src="../../assets/icons/wallet.svg" alt="Apple Wallet" class="wallet-icon" />
-        <span>Add to Apple Wallet</span>
-      </a>
+        <span>Share QR Code</span>
+      </button>
     </div>
   </div>
 
@@ -186,14 +186,49 @@
 
     const canvas = document.createElement('canvas');
     QRCode.toCanvas(canvas, "{{{baseUrl}}}/{{{slug}}}", {
-      width: 256,
+      width: 512,
       errorCorrectionLevel: 'H'
     }, function (error) {
       if (error) {
         console.error(error);
         return;
       }
+      // Scale down for display
+      canvas.style.width = '256px';
+      canvas.style.height = '256px';
       document.getElementById('qrcode').appendChild(canvas);
+    });
+
+    // Share QR code - iOS will show native share sheet with Wallet option
+    document.getElementById('saveToWallet').addEventListener('click', async function() {
+      try {
+        // Convert canvas to blob
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const file = new File([blob], '{{slug}}-qr-code.png', { type: 'image/png' });
+        
+        // Use Web Share API if available (works on iOS/Android)
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: '{{name}} - QR Code',
+            text: 'Scan this QR code to view my links: {{{baseUrl}}}/{{{slug}}}'
+          });
+        } else {
+          // Fallback: download the file
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = '{{slug}}-qr-code.png';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Error sharing:', error);
+        }
+      }
     });
   </script>
 </body>
